@@ -12,30 +12,40 @@ class TodoListVC: UITableViewController {
 
     var itemsArray = [TodoListModel]()
     let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     var isDefault: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let arrayStored = defaults.value(forKey: "ItemArray") as? [TodoListModel] {
-            itemsArray = arrayStored
-        }
-        let item = TodoListModel()
-        item.itemName = "Rizwan"
-        itemsArray.append(item)
-        
-        let item1 = TodoListModel()
-        item1.itemName = "Nas"
-        itemsArray.append(item1)
-        
-        let item2 = TodoListModel()
-        item2.itemName = "Mohammed"
-        itemsArray.append(item2)
-        
+        loadItems()
         setNeedsStatusBarAppearanceUpdate()
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {return .lightContent}
     override func setNeedsStatusBarAppearanceUpdate() {
         //preferredStatusBarStyle = .default
+    }
+    
+    func saveItemsMethod() {
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(self.itemsArray)
+            try data.write(to: self.dataFilePath!)
+        } catch {
+            print(error)
+        }
+        tableView.reloadData()
+    }
+    
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemsArray = try decoder.decode([TodoListModel].self, from: data)
+            } catch {
+                print(error)
+            }
+            
+        }
     }
     //MARK: - TableView Data Source Method
     
@@ -58,6 +68,7 @@ class TodoListVC: UITableViewController {
         itemsArray[indexPath.row].itemSelected = !itemsArray[indexPath.row].itemSelected
         tableView.reloadRows(at: [indexPath], with: .fade)
         tableView.deselectRow(at: indexPath, animated: true)
+        saveItemsMethod()
     }
     
     //MARK: - Add New Items Sections
@@ -69,8 +80,7 @@ class TodoListVC: UITableViewController {
             let item = TodoListModel()
             item.itemName = alertTextField.text!
             self.itemsArray.append(item)
-            self.defaults.set(self.itemsArray, forKey: "ItemArray")
-            self.tableView.reloadData()
+            self.saveItemsMethod()
         }
         alert.addTextField { (textField) in
             textField.placeholder = "New Item"

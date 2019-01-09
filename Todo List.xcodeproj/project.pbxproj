@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		FA3B827521E6021E0095A1F3 /* TodoListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B827421E6021E0095A1F3 /* TodoListModel.swift */; };
-		FA3B827A21E626430095A1F3 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA8F394621E51B31000ED745 /* Info.plist */; };
 		FA8F393B21E51B2F000ED745 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8F393A21E51B2F000ED745 /* AppDelegate.swift */; };
 		FA8F393D21E51B2F000ED745 /* TodoListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8F393C21E51B2F000ED745 /* TodoListVC.swift */; };
 		FA8F394021E51B2F000ED745 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA8F393E21E51B2F000ED745 /* Main.storyboard */; };
@@ -63,13 +62,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		FA3B827921E603A50095A1F3 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		FA8F392E21E51B2E000ED745 = {
 			isa = PBXGroup;
 			children = (
@@ -94,10 +86,17 @@
 				FA3B827821E603640095A1F3 /* Model */,
 				FA3B827721E603480095A1F3 /* View */,
 				FA3B827621E603290095A1F3 /* Controller */,
-				FA3B827921E603A50095A1F3 /* Supporting Files */,
 				FA8F394621E51B31000ED745 /* Info.plist */,
+				FAD2D2B721E6436400B6C638 /* Supportin Files */,
 			);
 			path = "Todo List";
+			sourceTree = "<group>";
+		};
+		FAD2D2B721E6436400B6C638 /* Supportin Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Supportin Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -158,7 +157,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA3B827A21E626430095A1F3 /* Info.plist in Resources */,
 				FA8F394521E51B31000ED745 /* LaunchScreen.storyboard in Resources */,
 				FA8F394221E51B31000ED745 /* Assets.xcassets in Resources */,
 				FA8F394021E51B2F000ED745 /* Main.storyboard in Resources */,

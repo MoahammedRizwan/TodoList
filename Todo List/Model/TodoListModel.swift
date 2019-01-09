@@ -8,7 +8,7 @@
 
 import Foundation
 
-class TodoListModel {
+class TodoListModel : Codable {
     var itemName = String()
     var itemSelected = false
 }
