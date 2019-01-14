@@ -9,8 +9,10 @@
 import UIKit
 import CoreData
 import RealmSwift
+import SwipeCellKit
+import ChameleonFramework
 
-class CategoryTableViewController: UITableViewController {
+class CategoryTableViewController: SwipeTableViewController {
 
     
     let realm = try! Realm()
@@ -24,15 +26,6 @@ class CategoryTableViewController: UITableViewController {
     //MARK: Data Manipulation Method
     
     func saveDataValue(category : CategoryData) {
-        //Core Data
-//        do {
-//            try context.save()
-//        } catch {
-//            print(error)
-//        }
-//        tableView.reloadData()
-        
-        //Realm
         do {
             try realm.write {
                 realm.add(category)
@@ -44,14 +37,6 @@ class CategoryTableViewController: UITableViewController {
     }
     
     func loadDataValues() {
-        //Core Data
-//        do {
-//            categoryArray = try context.fetch(request)
-//        } catch  {
-//            print(error)
-//        }
-//        tableView.reloadData()
-        
         //Realm
         
         let categories = realm.objects(CategoryData.self)
@@ -66,13 +51,13 @@ class CategoryTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let categoryCell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
+        let categoryCell = super.tableView(tableView, cellForRowAt: indexPath)
+        categoryCell.backgroundColor = UIColor.randomFlat
         categoryCell.textLabel?.text = categoryArray?[indexPath.row].categoryName ?? "No Caategories Added"
         return categoryCell
     }
     
     //MARK: - Table Delegate
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "goToItems", sender: self)
         tableView.deselectRow(at: indexPath, animated: true)
@@ -104,6 +89,18 @@ class CategoryTableViewController: UITableViewController {
         }
         alert.addAction(action)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    override func updateModel(at indexpath: IndexPath) {
+        do {
+            if let deleteObject = self.categoryArray?[indexpath.row] {
+                try  self.realm.write {
+                    self.realm.delete(deleteObject)
+                }
+            }
+        } catch {
+            print(error)
+        }
     }
     
 }

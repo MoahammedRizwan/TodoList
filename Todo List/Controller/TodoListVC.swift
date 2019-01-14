@@ -9,8 +9,9 @@
 import UIKit
 import CoreData
 import RealmSwift
+//import SwipeCellKit
 
-class TodoListVC: UITableViewController {
+class TodoListVC: SwipeTableViewController {
 
     @IBOutlet weak var searchBar: UISearchBar!
     let realm = try! Realm()
@@ -97,6 +98,17 @@ class TodoListVC: UITableViewController {
         tableView.reloadData()
     }
     
+    override func updateModel(at indexpath: IndexPath) {
+        do {
+            if let deleteObject = self.itemsArray?[indexpath.row] {
+                try  self.realm.write {
+                    self.realm.delete(deleteObject)
+                }
+            }
+        } catch {
+            print(error)
+        }
+    }
     
     //MARK: - TableView Data Source Method
     
@@ -105,7 +117,7 @@ class TodoListVC: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let todoCell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell", for: indexPath)
+        let todoCell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = itemsArray?[indexPath.row] {
             todoCell.accessoryType = item.itemSelected ? .checkmark : .none
             todoCell.textLabel?.text = item.itemName
@@ -121,7 +133,6 @@ class TodoListVC: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        itemsArray?[indexPath.row].itemSelected = !itemsArray?[indexPath.row].itemSelected ?? false
         tableView.deselectRow(at: indexPath, animated: true)
-        //saveItemsMethonewItem: <#RealmItem#>d()
         if let item = itemsArray?[indexPath.row] {
             do {
                 try realm.write {
