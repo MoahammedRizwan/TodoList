@@ -8,10 +8,13 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 class CategoryTableViewController: UITableViewController {
 
-    var categoryArray = [Category]()
+    
+    let realm = try! Realm()
+    var categoryArray : Results<CategoryData>?
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,32 +23,51 @@ class CategoryTableViewController: UITableViewController {
 
     //MARK: Data Manipulation Method
     
-    func saveDataValue() {
+    func saveDataValue(category : CategoryData) {
+        //Core Data
+//        do {
+//            try context.save()
+//        } catch {
+//            print(error)
+//        }
+//        tableView.reloadData()
+        
+        //Realm
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
             print(error)
         }
         tableView.reloadData()
     }
     
-    func loadDataValues(with request:NSFetchRequest<Category> = Category.fetchRequest()) {
-        do {
-            categoryArray = try context.fetch(request)
-        } catch  {
-            print(error)
-        }
+    func loadDataValues() {
+        //Core Data
+//        do {
+//            categoryArray = try context.fetch(request)
+//        } catch  {
+//            print(error)
+//        }
+//        tableView.reloadData()
+        
+        //Realm
+        
+        let categories = realm.objects(CategoryData.self)
+        categoryArray = categories
         tableView.reloadData()
+        
     }
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryArray.count
+        return categoryArray?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let categoryCell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
-        categoryCell.textLabel?.text = categoryArray[indexPath.row].categoryName!
+        categoryCell.textLabel?.text = categoryArray?[indexPath.row].categoryName ?? "No Caategories Added"
         return categoryCell
     }
     
@@ -60,7 +82,7 @@ class CategoryTableViewController: UITableViewController {
         if segue.identifier == "goToItems" {
             if let destinationVC = segue.destination as? TodoListVC {
                 if let selectedIndex = tableView.indexPathForSelectedRow {
-                    destinationVC.selectedCategory = categoryArray[selectedIndex.row]
+                    destinationVC.selectedCategory = categoryArray?[selectedIndex.row]
                 }
             }
         }
@@ -70,10 +92,12 @@ class CategoryTableViewController: UITableViewController {
         var alertTextField = UITextField()
         let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
-            let categoryItem = Category(context: self.context)
-            categoryItem.categoryName = alertTextField.text!
-            self.categoryArray.append(categoryItem)
-            self.saveDataValue()
+//            let categoryItem = Category(context: self.context)
+//            categoryItem.categoryName = alertTextField.text!
+//            self.categoryArray.append(categoryItem)
+            let newCat = CategoryData()
+            newCat.categoryName = alertTextField.text!
+            self.saveDataValue(category: newCat)
         }
         alert.addTextField { (textField) in
             alertTextField = textField
@@ -89,7 +113,7 @@ extension CategoryTableViewController: UISearchBarDelegate {
         let request : NSFetchRequest<Category> = Category.fetchRequest()
         request.predicate = NSPredicate(format: "categoryName CONTAINS[cd] %@", searchBar.text!)
         request.sortDescriptors = [NSSortDescriptor(key: "categoryName", ascending: true)]
-        loadDataValues(with: request)
+        loadDataValues()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
